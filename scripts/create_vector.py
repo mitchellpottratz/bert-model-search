@@ -14,17 +14,10 @@ def main(args):
     count = 1
     for line in read_input:
       print('Indexing document', count)
-        
-      # create an object from the csv row
-      document = create_document(line)
-
-      # create the text vector 
-      title_vector = create_vector_field(document['title'])
-  
-      # add the title vector to the document
-      document['title_vector'] = title_vector[0]
       
-      # add the document with the vector to the output file
+      document = create_document(line)
+      title_vector = create_vector_field(document['title'])
+      document['title_vector'] = title_vector[0]
       write_document(args.output, document)
       
       count += 1
