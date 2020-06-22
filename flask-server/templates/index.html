@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bert Model Search</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/css/uikit.min.css" />
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/js/uikit-icons.min.js"></script>
+  </head>
+  <body>
+    <div class="uk-container uk-padding-bottom">
+
+      <!-- Search Form -->
+      <div class="uk-card uk-card-default uk-card-body uk-width-1-2 uk-margin-auto">
+        <form id="search-form">
+          <label for="search">Press Enter to Search</label>
+          <input type="text" name="search" class="uk-input uk-margin-small-top" id="search-input" placeholder="Start Typing..."/>
+        </form>       
+      </div>
+
+      <!-- Search Results -->
+      <div class="uk-grid-small uk-child-width-expand@s uk-text-center uk-margin-large-top" id="search-results-container" uk-grid>
+        
+      </div>
+
+    </div>
+    <script type="text/javascript">
+
+      function displaySearchResults(searchResults) {
+        const searchResultsContainer = document.getElementById('search-results-container');
+
+        // clears the previous search results
+        searchResultsContainer.innerHTML = '';
+
+        const searchResultElements = searchResults.map((result) => {
+          const card = document.createElement('div');
+          card.setAttribute('class', 'uk-card uk-card-default uk-card-body uk-width-1-2');
+
+          const cardTitle = document.createElement('h4');
+          cardTitle.innerHTML = result._source.title;
+
+          card.appendChild(cardTitle);
+          searchResultsContainer.appendChild(card);
+        });
+      }
+
+
+      const searchForm = document.getElementById("search-form")
+
+      searchForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const query = document.getElementById("search-input").value;
+
+        const response = await fetch('/search?q=' + query);
+        const parsedResponse = await response.json();
+
+        displaySearchResults(parsedResponse.hits.hits);
+      });
+    </script>
+  </body>
+</html>

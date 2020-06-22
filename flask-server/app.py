@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify
 from elasticsearch import Elasticsearch
 from bert_serving.client import BertClient
 from dotenv import load_dotenv
@@ -11,24 +11,25 @@ BERT_HOST = os.environ['BERT_HOST']
 ES_HOST = os.environ['ES_HOST']
 ES_USER = os.environ['ES_USER']
 ES_PASSWORD = os.environ['ES_PASSWORD']
-
+  
 
 app = Flask(__name__)
 
 
 @app.route('/', methods=['GET'])
 def index():
-  return 'Index page'
+  return render_template('index.html')
 
 
 @app.route('/search', methods=['GET'])
 def search():
+
   bc = BertClient(ip=BERT_HOST, output_fmt='list')
-  es = Elasticsearch(ES_HOST, http_auth=(ES_USER, ES_PASSWORD))
+  es = Elasticsearch(hosts=ES_HOST, http_auth=(ES_USER, ES_PASSWORD))
   
   query = request.args.get('q')
   query_vector = bc.encode([query])[0]
-  
+
   script_query = {
     "script_score": {
       "query": {"match_all": {}},
@@ -40,9 +41,9 @@ def search():
     }
   
   response = es.search(
-    index=INDEX_NAME,
+    index='news-title-vector',
     body={
-      'size': 10,
+      'size': 20,
       'query': script_query
     }
   )

@@ -19,7 +19,6 @@ def main(args):
       title_vector = create_vector_field(document['title'])
       document['title_vector'] = title_vector[0]
       write_document(args.output, document)
-      
       count += 1
   
 
